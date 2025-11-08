@@ -11,22 +11,14 @@ const __dirname = path.dirname(__filename);
 const contactsPath = path.resolve(__dirname, "db", "contacts.json");
 
 export async function listContacts(req, res) {
-  try {
+
     // I read the file contacts.json
     const data = await fs.readFile(contactsPath, "utf-8");
     // I parse json in JS object
     const contacts = JSON.parse(data);
 
-    // I validate that it's an array
-    if (!Array.isArray(contacts)) {
-      throw new Error("contacts.json must contain an array");
-    }
-    //I return arr of contacts as responce from the server
-    res.json(contacts);
-  } catch (error) {
-    console.error("Error reading contacts:", error.message);
-    throw error;
-  }
+   return contacts
+ 
 }
 
 export async function getContactById(contactId) {
