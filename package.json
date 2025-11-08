@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/AndyGrigs/goit-node-cli#readme",
   "dependencies": {
-    
+    "express": "^5.1.0",
     "nodemon": "^3.1.10"
   }
 }
