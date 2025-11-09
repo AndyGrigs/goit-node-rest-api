@@ -16,3 +16,12 @@ Content-Type: application/json
     "email": "msdfr@git.com",
     "phone": "+349812987333"
 }
+
+###
+PUT http://localhost:3000/contacts/AeHIrLTr6JkxGE6SN-0Rw
+Content-Type: application/json
+
+{
+    "name": "Kennedy Lane Updated",
+    "email": "kennedy.updated@example.com"
+}
