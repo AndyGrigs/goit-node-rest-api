@@ -30,7 +30,7 @@ export async function getContactById(contactId) {
   return contact || null;
 }
 
-export async function removeContact(contactId) {
+export async function deleteContact(contactId) {
   // I get the list of contacts
   const contacts = await listContacts();
 
