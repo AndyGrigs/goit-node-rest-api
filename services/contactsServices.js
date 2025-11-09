@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 // contacts.js
 
-const contactsPath = path.resolve(__dirname, "db", "contacts.json");
+const contactsPath = path.resolve(__dirname, "..", "db", "contacts.json");
 
 export async function listContacts(req, res) {
 
