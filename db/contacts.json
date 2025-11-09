@@ -58,5 +58,11 @@
     "name": "Ivan Volos",
     "email": "johnVolos@example.com",
     "phone": "(123) 456-43847"
+  },
+  {
+    "id": "6f436746-4178-4c2c-b870-dcd4e5a92566",
+    "name": "Mariana Myfin",
+    "email": "msdfr@git.com",
+    "phone": "+349812987333"
   }
 ]

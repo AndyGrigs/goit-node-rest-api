@@ -1,4 +1,5 @@
 import * as contactsServices from "../services/contactsServices.js";
+import { createContactSchema } from '../schemas/contactsSchemas.js';
 
 export async function getAllContacts(req, res) {
   try {
@@ -41,5 +42,20 @@ export const removeContact = async (req, res) => {
     res.status(200).json({message: "Contact deleted!"});
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const postContact = async (req, res) => {
+  try {
+    const { error } = createContactSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+
+    const { name, email, phone } = req.body;
+    const newContact = await contactsServices.addContact(name, email, phone);
+    res.status(201).json(newContact);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

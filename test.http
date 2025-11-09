@@ -6,3 +6,13 @@ GET http://localhost:3000/contacts/drsAJ4SHPYqZeG-83QTVW
 
 ###
 DELETE http://localhost:3000/contacts/70ca69b3-535f-4d5f-aa42-5b1902ec7db5
+
+###
+POST http://localhost:3000/contacts
+Content-Type: application/json
+
+{
+    "name": "Mariana Myfin",
+    "email": "msdfr@git.com",
+    "phone": "+349812987333"
+}
