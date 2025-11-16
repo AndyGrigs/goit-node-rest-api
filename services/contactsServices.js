@@ -1,4 +1,4 @@
-import Contact from "../db/models/Contact.js";
+import Contact from "../db/models/contacts.js";
 
 // Отримати всі контакти
 export const listContacts = async () => {
