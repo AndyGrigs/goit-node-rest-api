@@ -1,49 +1,27 @@
-import { program } from "commander";
-import {
-  addContact,
-  getContactById,
-  listContacts,
-  removeContact,
-} from "./src/contacts.js";
-program
-  .option("-a, --action <type>", "choose action")
-  .option("-i, --id <type>", "user id")
-  .option("-n, --name <type>", "user name")
-  .option("-e, --email <type>", "user email")
-  .option("-p, --phone <type>", "user phone");
+import express from "express";
+import morgan from "morgan";
+import cors from "cors";
 
-program.parse();
+import contactsRouter from "./routes/contactsRouter.js";
 
-const options = program.opts();
+const app = express();
 
-// TODO: рефакторити
-async function invokeAction({ action, id, name, email, phone }) {
-  switch (action) {
-    case "list":
-      const contacts = await listContacts();
-      console.table(contacts);
-      break;
+app.use(morgan("tiny"));
+app.use(cors());
+app.use(express.json());
 
-    case "get":
-      const contact = await getContactById(id);
-      console.log(contact);
-      break;
+app.use("/api/contacts", contactsRouter);
 
-    case "add":
-      const newContact = await addContact(name, email, phone);
-      console.log(newContact);
-      break;
 
-    case "remove":
-      const removedContact = await removeContact(id);
-      console.log(removedContact);
-      break;
+app.use((err, _, res, __) => {
+  const { status = 500, message = "Internal server error" } = err;
+  res.status(status).json({ message });
+});
 
-    default:
-      console.warn("\x1B[31m Unknown action type!");
-  }
-}
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
-invokeAction(options).catch((err) => {
-  console.error("\x1B[31m Error:", err.message);
+app.listen(3000, () => {
+  console.log("Server is listening on port 3000.");
 });

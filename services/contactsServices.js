@@ -8,15 +8,17 @@ const __dirname = path.dirname(__filename);
 
 // contacts.js
 
-const contactsPath = path.resolve(__dirname, "db", "contacts.json");
+const contactsPath = path.resolve(__dirname, "..", "db", "contacts.json");
 
-export async function listContacts() {
-  // I read the file contacts.json
-  const data = await fs.readFile(contactsPath, "utf-8");
-  // I parse json in JS object
-  const contacts = JSON.parse(data);
-  //I return arr of contacts
-  return contacts;
+export async function listContacts(req, res) {
+
+    // I read the file contacts.json
+    const data = await fs.readFile(contactsPath, "utf-8");
+    // I parse json in JS object
+    const contacts = JSON.parse(data);
+
+   return contacts
+ 
 }
 
 export async function getContactById(contactId) {
@@ -28,7 +30,7 @@ export async function getContactById(contactId) {
   return contact || null;
 }
 
-export async function removeContact(contactId) {
+export async function deleteContact(contactId) {
   // I get the list of contacts
   const contacts = await listContacts();
 
@@ -67,4 +69,23 @@ export async function addContact(name, email, phone) {
   return newContact;
 }
 
+export async function updateContact(contactId, updateData) {
+  // I get the list of contacts
+  const contacts = await listContacts();
 
+  // I find the index of contact which I want to update
+  const index = contacts.findIndex((cont) => cont.id === contactId);
+
+  // I return null if the contact doesn't exist
+  if (index === -1) {
+    return null;
+  }
+
+  // I update the contact with new data, keeping old values for fields not provided
+  contacts[index] = { ...contacts[index], ...updateData };
+
+  // I write the updated list of contacts to the file
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+
+  return contacts[index];
+}
