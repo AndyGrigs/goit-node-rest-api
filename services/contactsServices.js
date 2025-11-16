@@ -1,91 +1,93 @@
-import { promises as fs } from "fs";
-import path from "path";
-import crypto from "crypto";
-import { fileURLToPath } from "url";
+import Contact from "../db/models/Contact.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// contacts.js
-
-const contactsPath = path.resolve(__dirname, "..", "db", "contacts.json");
-
-export async function listContacts(req, res) {
-
-    // I read the file contacts.json
-    const data = await fs.readFile(contactsPath, "utf-8");
-    // I parse json in JS object
-    const contacts = JSON.parse(data);
-
-   return contacts
- 
-}
-
-export async function getContactById(contactId) {
-  // I get all contacts
-  const contacts = await listContacts();
-  // I look for the needed contact by it's id
-  const contact = contacts.find((contact) => contact.id === contactId);
-  // I return the needed contact or null
-  return contact || null;
-}
-
-export async function deleteContact(contactId) {
-  // I get the list of contacts
-  const contacts = await listContacts();
-
-  // I find the index of conctact which I want to remove
-  const index = contacts.findIndex((cont) => cont.id === contactId);
-  // I return null if the contcact doesn't exist
-  if (index === -1) {
-    return null;
+// Отримати всі контакти
+export const listContacts = async () => {
+  try {
+    const contacts = await Contact.findAll({
+      order: [["id", "ASC"]], // Сортування за id
+    });
+    return contacts;
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    throw error;
   }
+};
 
-  // I save the removed conctact
-  const [removedContact] = contacts.splice(index, 1);
-  //I write the new list of contacts without removed
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-  return removedContact;
-}
-// console.log(await listContacts());
-// const removed = await removeContact("rsKkOQUi80UsgVPCcLZZW")
-// console.log(removed)
-
-export async function addContact(name, email, phone) {
-  // I get the list of contacts
-  const contacts = await listContacts();
-  // I form the new contact with its own id
-  const newContact = {
-    id: crypto.randomUUID(),
-    name,
-    email,
-    phone,
-  };
-  // I add the new one to the list
-  contacts.push(newContact);
-  // I write the concacts in the file
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return newContact;
-}
-
-export async function updateContact(contactId, updateData) {
-  // I get the list of contacts
-  const contacts = await listContacts();
-
-  // I find the index of contact which I want to update
-  const index = contacts.findIndex((cont) => cont.id === contactId);
-
-  // I return null if the contact doesn't exist
-  if (index === -1) {
-    return null;
+// Отримати контакт за ID
+export const getContactById = async (contactId) => {
+  try {
+    const contact = await Contact.findByPk(contactId);
+    return contact;
+  } catch (error) {
+    console.error("Error fetching contact by ID:", error);
+    throw error;
   }
+};
 
-  // I update the contact with new data, keeping old values for fields not provided
-  contacts[index] = { ...contacts[index], ...updateData };
+// Видалити контакт
+export const deleteContact = async (contactId) => {
+  try {
+    const contact = await Contact.findByPk(contactId);
+    
+    if (!contact) {
+      return null;
+    }
 
-  // I write the updated list of contacts to the file
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+    await contact.destroy();
+    return contact; // Повертаємо видалений контакт
+  } catch (error) {
+    console.error("Error deleting contact:", error);
+    throw error;
+  }
+};
 
-  return contacts[index];
-}
+// Додати новий контакт
+export const addContact = async (name, email, phone) => {
+  try {
+    const newContact = await Contact.create({
+      name,
+      email,
+      phone,
+      favorite: false,
+    });
+    return newContact;
+  } catch (error) {
+    console.error("Error adding contact:", error);
+    throw error;
+  }
+};
+
+// Оновити контакт
+export const updateContact = async (contactId, body) => {
+  try {
+    const contact = await Contact.findByPk(contactId);
+    
+    if (!contact) {
+      return null;
+    }
+
+    // Оновлюємо тільки ті поля, які прийшли в body
+    const updatedContact = await contact.update(body);
+    return updatedContact;
+  } catch (error) {
+    console.error("Error updating contact:", error);
+    throw error;
+  }
+};
+
+// Оновити статус favorite
+export const updateStatusContact = async (contactId, favorite) => {
+  try {
+    const contact = await Contact.findByPk(contactId);
+    
+    if (!contact) {
+      return null;
+    }
+
+    const updatedContact = await contact.update({ favorite });
+    return updatedContact;
+  } catch (error) {
+    console.error("Error updating contact status:", error);
+    throw error;
+  }
+};
