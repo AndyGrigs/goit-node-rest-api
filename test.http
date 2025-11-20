@@ -2,26 +2,26 @@
 GET http://localhost:3000/api/contacts
 
 ###
-GET http://localhost:3000/api/contacts/drsAJ4SHPYqZeG-83QTVW
+GET http://localhost:3000/api/contacts/2
 
 ###
-DELETE http://localhost:3000/api/contacts/70ca69b3-535f-4d5f-aa42-5b1902ec7db5
+DELETE http://localhost:3000/api/contacts/3
 
 ###
 POST http://localhost:3000/api/contacts
 Content-Type: application/json
 
 {
-    "name": "Mariana Myfin",
-    "email": "msdfr@git.com",
-    "phone": "+349812987333"
+    "name": "Benjamin Voros",
+    "email": "eoeeeer@git.com",
+    "phone": "+3431212121212"
 }
 
 ###
-PUT http://localhost:3000/api/contacts/AeHIrLTr6JkxGE6SN-0Rw
+PUT http://localhost:3000/api/contacts/4
 Content-Type: application/json
 
 {
-    "name": "Kennedy Lane Updated",
+    "name": "Kennedy Lane",
     "email": "kennedy.updated@example.com"
 }
