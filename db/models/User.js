@@ -4,8 +4,8 @@ import sequelize from "../sequelize.js";
 const User = sequelize.define("User", {
   id: {
     type: DataTypes.INTEGER,
-    primryKey: true,
-    autoIcrement: true,
+    primaryKey: true,
+    autoIncrement: true,
   },
   password: {
     type: DataTypes.STRING,
