@@ -21,12 +21,11 @@ export const registerUser = async (email, password) => {
 
   return {
     user: {
-        email: newUser.email,
-        subscription: newUser.subscription,
+      email: newUser.email,
+      subscription: newUser.subscription,
     },
   };
 };
-
 
 export const loginUser = async (email, password) => {
   const user = await User.findOne({ where: { email } });
@@ -34,23 +33,36 @@ export const loginUser = async (email, password) => {
   if (!user) {
     return { error: "Email or password is wrong", status: 401 };
   }
-  
+
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  
+
   if (!isPasswordValid) {
     return { error: "Email or password is wrong", status: 401 };
   }
-  const token = jwt.sign(
-    {id: user.id, email: user.email},
-    JWT_SECRET,
-    {expiresIn: "24h"}
-  );
+  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+    expiresIn: "24h",
+  });
 
   return {
     token,
     user: {
-        email: newUser.email,
-        subscription: newUser.subscription,
+      email: newUser.email,
+      subscription: newUser.subscription,
     },
   };
+};
+
+export const logoutUser = async (userId) => {
+  // 1. Шукаємо користувача за id (id ми отримаємо з req.user)
+  const user = await User.findByPk(userId);
+
+  if (!user) {
+    return { error: "Not authorized", status: 401 };
+  }
+
+  // 2. Видаляємо токен - встановлюємо null
+  await user.update({ token: null });
+
+  // 3. Повертаємо успіх
+  return { success: true };
 };
