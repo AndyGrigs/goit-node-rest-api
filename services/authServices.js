@@ -43,11 +43,13 @@ export const loginUser = async (email, password) => {
     expiresIn: "24h",
   });
 
+  await user.update({ token });
+
   return {
     token,
     user: {
-      email: newUser.email,
-      subscription: newUser.subscription,
+      email: user.email,
+      subscription: user.subscription,
     },
   };
 };
