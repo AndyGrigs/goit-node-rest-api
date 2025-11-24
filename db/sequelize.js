@@ -1,5 +1,7 @@
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
+import User from "./models/User.js";
+import Contact from "./models/Contacts.js";
 
 dotenv.config();
 
@@ -24,7 +26,9 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   logging: false, // Вимкнути логування SQL запитів (можна встановити console.log дляDebugMode)
 });
 
-
+// Define associations
+User.hasMany(Contact, { foreignKey: "userId", onDelete: "CASCADE" });
+Contact.belongsTo(User, { foreignKey: "userId" });
 
 // Перевірка підключення
 export const connectDB = async () => {
