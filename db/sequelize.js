@@ -27,7 +27,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 // Define associations after models are loaded
 export const defineAssociations = async () => {
   const User = (await import("./models/User.js")).default;
-  const Contact = (await import("./models/Contacts.js")).default;
+  const Contact = (await import("./models/contacts.js")).default;
   User.hasMany(Contact, { foreignKey: "userId", onDelete: "CASCADE" });
   Contact.belongsTo(User, { foreignKey: "userId" });
 };

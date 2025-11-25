@@ -15,7 +15,7 @@ const authenticate = async (req, res, next) => {
     const [bearer, token] = authHeader.split(" ");
 
     if (bearer !== "Bearer" || !token) {
-      throw HttpError(401, "Not athorised");
+      throw HttpError(401, "Not authorised");
     }
 
     let decoded;
@@ -23,13 +23,13 @@ const authenticate = async (req, res, next) => {
       decoded = jwt.verify(token, JWT_SECRET);
     } catch (error) {
       console.error(error);
-      throw HttpError(401, "Not athorised");
+      throw HttpError(401, "Not authorised");
     }
 
     const user = await User.findByPk(decoded.id);
 
     if (!user || user.token !== token) {
-      throw HttpError(401, "Not athorised");
+      throw HttpError(401, "Not authorised");
     }
 
     req.user = user;

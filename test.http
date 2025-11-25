@@ -1,27 +1,182 @@
-###
-GET http://localhost:3000/api/contacts
+### Variables
+@baseURL = http://localhost:3000/api
+@token = your_jwt_token_here
 
-###
-GET http://localhost:3000/api/contacts/2
+################################################################################
+# AUTH ENDPOINTS
+################################################################################
 
-###
-DELETE http://localhost:3000/api/contacts/3
-
-###
-POST http://localhost:3000/api/contacts
+### 1. Register New User
+# @name register
+POST {{baseURL}}/auth/register
 Content-Type: application/json
 
 {
-    "name": "Benjamin Voros",
-    "email": "eoeeeer@git.com",
-    "phone": "+3431212121212"
+    "email": "test@example.com",
+    "password": "password123"
 }
 
-###
-PUT http://localhost:3000/api/contacts/4
+### 2. Login User
+# @name login
+POST {{baseURL}}/auth/login
 Content-Type: application/json
 
 {
-    "name": "Kennedy Lane",
-    "email": "kennedy.updated@example.com"
+    "email": "test@example.com",
+    "password": "password123"
+}
+
+### 3. Get Current User (requires authentication)
+GET {{baseURL}}/auth/current
+Authorization: Bearer {{token}}
+
+### 4. Logout User (requires authentication)
+POST {{baseURL}}/auth/logout
+Authorization: Bearer {{token}}
+
+################################################################################
+# CONTACTS ENDPOINTS (All require authentication)
+################################################################################
+
+### 5. Get All Contacts
+GET {{baseURL}}/contacts
+Authorization: Bearer {{token}}
+
+### 6. Get Contact by ID
+GET {{baseURL}}/contacts/1
+Authorization: Bearer {{token}}
+
+### 7. Create New Contact
+POST {{baseURL}}/contacts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "+1234567890"
+}
+
+### 8. Update Contact (PUT - full update)
+PUT {{baseURL}}/contacts/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "John Doe Updated",
+    "email": "john.updated@example.com",
+    "phone": "+9876543210"
+}
+
+### 9. Update Contact Favorite Status (PATCH)
+PATCH {{baseURL}}/contacts/1/favorite
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "favorite": true
+}
+
+### 10. Delete Contact
+DELETE {{baseURL}}/contacts/1
+Authorization: Bearer {{token}}
+
+################################################################################
+# TEST SCENARIOS
+################################################################################
+
+### Test Invalid Email Format
+POST {{baseURL}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "invalid-email",
+    "password": "password123"
+}
+
+### Test Short Password (< 6 characters)
+POST {{baseURL}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "test2@example.com",
+    "password": "123"
+}
+
+### Test Login with Wrong Password
+POST {{baseURL}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "wrongpassword"
+}
+
+### Test Login with Non-existent Email
+POST {{baseURL}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "nonexistent@example.com",
+    "password": "password123"
+}
+
+### Test Access Protected Route Without Token
+GET {{baseURL}}/contacts
+
+### Test Create Contact with Missing Fields
+POST {{baseURL}}/contacts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Incomplete Contact"
+}
+
+### Test Create Contact with Invalid Email
+POST {{baseURL}}/contacts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Bad Email Contact",
+    "email": "not-an-email",
+    "phone": "+1234567890"
+}
+
+### Test Get Non-existent Contact
+GET {{baseURL}}/contacts/99999
+Authorization: Bearer {{token}}
+
+### Test Delete Non-existent Contact
+DELETE {{baseURL}}/contacts/99999
+Authorization: Bearer {{token}}
+
+### Test Update Non-existent Contact
+PUT {{baseURL}}/contacts/99999
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Ghost Contact",
+    "email": "ghost@example.com",
+    "phone": "+1111111111"
+}
+
+### Test PATCH Favorite with Non-boolean Value
+PATCH {{baseURL}}/contacts/1/favorite
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "favorite": "yes"
+}
+
+### Test PATCH Favorite with Missing Field
+PATCH {{baseURL}}/contacts/1/favorite
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Should fail"
 }
