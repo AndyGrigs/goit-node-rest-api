@@ -1,6 +1,6 @@
 ### Variables
 @baseURL = http://localhost:3000/api
-@token = your_jwt_token_here
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzY0MTAxMDQ4LCJleHAiOjE3NjQxODc0NDh9.ZyUbyVSBzuP5-n3cGppqvCVH2aKqETD9u99YrFISd-0
 
 ################################################################################
 # AUTH ENDPOINTS
@@ -52,24 +52,24 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "phone": "+1234567890"
+    "name": "John Doodle",
+    "email": "john.dooodle@example.com",
+    "phone": "+1234564899"
 }
 
 ### 8. Update Contact (PUT - full update)
-PUT {{baseURL}}/contacts/1
+PUT {{baseURL}}/contacts/8
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "name": "John Doe Updated",
-    "email": "john.updated@example.com",
-    "phone": "+9876543210"
+    "name": "John Dooffe",
+    "email": "john.doofed@example.com",
+    "phone": "+98734543210"
 }
 
 ### 9. Update Contact Favorite Status (PATCH)
-PATCH {{baseURL}}/contacts/1/favorite
+PATCH {{baseURL}}/contacts/8/favorite
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -78,7 +78,7 @@ Authorization: Bearer {{token}}
 }
 
 ### 10. Delete Contact
-DELETE {{baseURL}}/contacts/1
+DELETE {{baseURL}}/contacts/8
 Authorization: Bearer {{token}}
 
 ################################################################################
