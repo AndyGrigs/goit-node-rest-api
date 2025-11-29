@@ -1,9 +1,10 @@
 import Contact from "../db/models/contacts.js";
 
 // Отримати всі контакти
-export const listContacts = async () => {
+export const listContacts = async (userId) => {
   try {
     const contacts = await Contact.findAll({
+      where: { userId },
       order: [["id", "ASC"]], // Сортування за id
     });
     return contacts;
@@ -14,9 +15,11 @@ export const listContacts = async () => {
 };
 
 // Отримати контакт за ID
-export const getContactById = async (contactId) => {
+export const getContactById = async (contactId, userId) => {
   try {
-    const contact = await Contact.findByPk(contactId);
+    const contact = await Contact.findOne({
+      where: { id: contactId, userId },
+    });
     return contact;
   } catch (error) {
     console.error("Error fetching contact by ID:", error);
@@ -25,10 +28,12 @@ export const getContactById = async (contactId) => {
 };
 
 // Видалити контакт
-export const deleteContact = async (contactId) => {
+export const deleteContact = async (contactId, userId) => {
   try {
-    const contact = await Contact.findByPk(contactId);
-    
+    const contact = await Contact.findOne({
+      where: { id: contactId, userId },
+    });
+
     if (!contact) {
       return null;
     }
@@ -42,9 +47,10 @@ export const deleteContact = async (contactId) => {
 };
 
 // Додати новий контакт
-export const addContact = async (name, email, phone) => {
+export const addContact = async (userId, name, email, phone) => {
   try {
     const newContact = await Contact.create({
+      userId,
       name,
       email,
       phone,
@@ -58,10 +64,12 @@ export const addContact = async (name, email, phone) => {
 };
 
 // Оновити контакт
-export const updateContact = async (contactId, body) => {
+export const updateContact = async (contactId, userId, body) => {
   try {
-    const contact = await Contact.findByPk(contactId);
-    
+    const contact = await Contact.findOne({
+      where: { id: contactId, userId },
+    });
+
     if (!contact) {
       return null;
     }
@@ -76,10 +84,12 @@ export const updateContact = async (contactId, body) => {
 };
 
 // Оновити статус favorite
-export const updateStatusContact = async (contactId, favorite) => {
+export const updateStatusContact = async (contactId, userId, favorite) => {
   try {
-    const contact = await Contact.findByPk(contactId);
-    
+    const contact = await Contact.findOne({
+      where: { id: contactId, userId },
+    });
+
     if (!contact) {
       return null;
     }
