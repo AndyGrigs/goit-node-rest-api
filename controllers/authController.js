@@ -1,4 +1,5 @@
 import * as authServices from "../services/authServices.js";
+import * as avatarServices from "../services/avatarServices.js";
 import HttpError from "../helpers/HttpError.js";
 
 export const register = async (req, res, next) =>{
@@ -49,6 +50,25 @@ export const getCurrent = async (req, res, next) => {
       subscription,
       avatarURL,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw HttpError(400, "No file provided");
+    }
+
+    const { id } = req.user;
+    const result = await avatarServices.updateUserAvatar(id, req.file.path);
+
+    if (result.error) {
+      throw HttpError(result.status, result.error);
+    }
+
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
