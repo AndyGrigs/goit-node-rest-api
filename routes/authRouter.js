@@ -17,5 +17,6 @@ authRouter.post("/logout", authenticate, authControllers.logout);
 authRouter.get("/current", authenticate, authControllers.getCurrent);
 
 authRouter.get("/verify/:verificationToken", authControllers.verifyEmail);
+authRouter.post("/verify", validateBody(loginSchema), authControllers.resendVerification);
 
 export default authRouter;

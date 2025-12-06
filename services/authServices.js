@@ -70,6 +70,12 @@ export const loginUser = async (email, password) => {
   if (!isPasswordValid) {
     return { error: "Email or password is wrong", status: 401 };
   }
+
+  // Перевіряємо, чи email верифіковано
+  if (!user.verify) {
+    return { error: "Email not verified. Please check your email.", status: 401 };
+  }
+
   const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
     expiresIn: "24h",
   });
@@ -122,4 +128,41 @@ export const verifyEmail = async (verificationToken) => {
   return {
     message: "Verification successful",
   };
+};
+
+export const resendVerificationEmail = async (email) => {
+  const user = await User.findOne({ where: { email } });
+
+  if (!user) {
+    return { error: "User not found", status: 404 };
+  }
+
+  if (user.verify) {
+    return { error: "Email already verified", status: 400 };
+  }
+
+  // Генеруємо новий токен
+  const verificationToken = crypto.randomUUID();
+  await user.update({ verificationToken });
+
+  // Відправляємо email
+  try {
+    const htmlContent = verificationEmailTemplate(
+      verificationToken,
+      BASE_URL || "http://localhost:3000"
+    );
+    await sendEmail(email, "Підтвердження реєстрації", htmlContent);
+
+    console.log(`Verification email resent to ${email}`);
+
+    return {
+      message: "Verification email resent successfully",
+    };
+  } catch (emailError) {
+    console.error("Failed to resend verification email:", emailError);
+    return {
+      error: "Failed to send verification email",
+      status: 500,
+    };
+  }
 };
