@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import User from "../db/models/User.js";
 
 const { JWT_SECRET } = process.env;
@@ -13,11 +14,19 @@ export const registerUser = async (email, password) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  const verificationToken = crypto.randomUUID();
+
   const newUser = await User.create({
     email,
     password: hashedPassword,
     subscription: "starter",
+    verificationToken,
+    verify: false,
   });
+
+  // ⭐ TODO: Тут пізніше додамо відправку email з посиланням
+  // Посилання буде виглядати так:
+  // http://localhost:3000/api/auth/verify/${verificationToken}
 
   return {
     user: {
@@ -67,4 +76,24 @@ export const logoutUser = async (userId) => {
 
   // 3. Повертаємо успіх
   return { success: true };
+};
+
+export const verifyEmail = async (verificationToken) => {
+  // Шукаємо користувача за токеном верифікації
+  const user = await User.findOne({ where: { verificationToken } });
+
+  // Якщо користувач не знайдений - повертаємо помилку
+  if (!user) {
+    return { error: "User not found", status: 404 };
+  }
+
+  // Оновлюємо користувача: видаляємо токен і встановлюємо verify = true
+  await user.update({
+    verify: true,
+    verificationToken: null,
+  });
+
+  return {
+    message: "Verification successful",
+  };
 };

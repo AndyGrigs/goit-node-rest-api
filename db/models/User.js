@@ -1,40 +1,50 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../sequelize.js";
 
-const User = sequelize.define("User", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: {
-        msg: "Invalid email format",
+const User = sequelize.define(
+  "User",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail: {
+          msg: "Invalid email format",
+        },
       },
     },
+    subscription: {
+      type: DataTypes.ENUM("starter", "pro", "business"),
+      defaultValue: "starter",
+    },
+    token: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
+    verify: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // За замовчуванням користувач не верифікований
+    },
+    verificationToken: {
+      type: DataTypes.STRING,
+      defaultValue: null,
+    },
   },
-  subscription: {
-    type:DataTypes.ENUM("starter", "pro", "business"),
-    defaultValue: "starter",
-  },
-  token: {
-    type:DataTypes.STRING,
-    defaultValue: null,
-  },
-},
-{
+  {
     tableName: "users",
     timestamps: true,
-    underscored: true, // created_at, updated_at
+    underscored: true,
   }
 );
 
