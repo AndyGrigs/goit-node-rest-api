@@ -1,9 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import sendEmail from "../helpers/sendEmail.js";
 import User from "../db/models/User.js";
+import { verificationEmailTemplate } from "../helpers/emailTemplates.js";
 
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET, BASE_URL } = process.env;
 
 export const registerUser = async (email, password) => {
   const existingUser = await User.findOne({ where: { email } });
@@ -24,17 +26,37 @@ export const registerUser = async (email, password) => {
     verify: false,
   });
 
-  // ⭐ TODO: Тут пізніше додамо відправку email з посиланням
-  // Посилання буде виглядати так:
-  // http://localhost:3000/api/auth/verify/${verificationToken}
+
+  try {
+    const htmlContent = verificationEmailTemplate(
+      verificationToken,
+      BASE_URL || "http://localhost:3000"
+    );
+
+    await sendEmail(
+      email,
+      "Підтвердження реєстрації", // Тема листа
+      htmlContent // HTML контент
+    );
+
+    console.log(`Verification email sent to ${email}`);
+  } catch (emailError) {
+    console.error("Failed to send verification email:", emailError);
+    // Користувач створений, але email не відправлено
+    // Можна додати логіку для повторної відправки пізніше
+  }
 
   return {
     user: {
       email: newUser.email,
       subscription: newUser.subscription,
     },
+    message: "User registered. Please check your email for verification link.",
   };
 };
+
+
+
 
 export const loginUser = async (email, password) => {
   const user = await User.findOne({ where: { email } });
@@ -62,6 +84,10 @@ export const loginUser = async (email, password) => {
     },
   };
 };
+
+
+
+
 
 export const logoutUser = async (userId) => {
   // 1. Шукаємо користувача за id (id ми отримаємо з req.user)
