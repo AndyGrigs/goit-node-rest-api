@@ -22,3 +22,11 @@ export const loginSchema = Joi.object({
     "any.required": "Password is required",
   }),
 });
+
+// Схема для повторної верифікації (тільки email)
+export const resendVerifySchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.email": "Email must be a valid email",
+    "any.required": "missing required field email",
+  }),
+});

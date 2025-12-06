@@ -138,7 +138,7 @@ export const resendVerificationEmail = async (email) => {
   }
 
   if (user.verify) {
-    return { error: "Email already verified", status: 400 };
+    return { error: "Verification has already been passed", status: 400 };
   }
 
   // Генеруємо новий токен
@@ -156,7 +156,7 @@ export const resendVerificationEmail = async (email) => {
     console.log(`Verification email resent to ${email}`);
 
     return {
-      message: "Verification email resent successfully",
+      message: "Verification email sent",
     };
   } catch (emailError) {
     console.error("Failed to resend verification email:", emailError);
